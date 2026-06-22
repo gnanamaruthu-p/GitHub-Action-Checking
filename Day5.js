@@ -19,7 +19,7 @@ console.log(generateTest());
 
 function executeTest(testName,callback){
 
-    console.log(`Runnong : ${testName}`);
+    console.log(`Running : ${testName}`);
 
     callback();
 
