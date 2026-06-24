@@ -461,3 +461,203 @@ function generateReport(title, ...results) {
 
 generateReport("E2E Report", "passed", "failed", "pending");
 
+
+1️⃣ for Loop — Classical Loop
+
+// Basic for loop
+for (let i = 0; i < 3; i++) {
+  console.log("Iteration:", i);
+}
+// 0, 1, 2
+
+// Loop through array
+const browsers = ["Chrome", "Firefox", "Safari"];
+for (let i = 0; i < browsers.length; i++) {
+  console.log(`Browser ${i}: ${browsers[i]}`);
+}
+
+// Loop with condition
+for (let i = 0; i < 10; i++) {
+  if (i === 5) break;  // exit loop
+  console.log(i);      // 0, 1, 2, 3, 4
+}
+
+// Skip iteration
+for (let i = 0; i < 5; i++) {
+  if (i === 2) continue;  // skip this iteration
+  console.log(i);         // 0, 1, 3, 4
+}
+
+2️⃣ while Loop — Loop While Condition True
+
+// Basic while loop
+let count = 0;
+while (count < 3) {
+  console.log("Count:", count);
+  count++;
+}
+
+// Retry logic (common in SDET)
+let retries = 0;
+let testPassed = false;
+
+while (retries < 3 && !testPassed) {
+  console.log(`Attempt ${retries + 1}`);
+  // test logic
+  testPassed = true;  // assume it passed
+  retries++;
+}
+
+console.log("Test passed after", retries, "attempts");
+
+3️⃣ forEach — Loop Through Arrays (Most Used in Tests)
+
+const testCases = ["Login", "Logout", "Cart"];
+
+testCases.forEach((testName, index) => {
+  console.log(`${index}: ${testName}`);
+});
+
+// With objects
+const users = [
+  { username: "admin", role: "admin" },
+  { username: "user", role: "user" }
+];
+
+users.forEach(user => {
+  console.log(`${user.username} is ${user.role}`);
+});
+
+4️⃣ if/else — Conditional Execution
+
+const testStatus = "passed";
+
+if (testStatus === "passed") {
+  console.log("✅ Test passed");
+} else if (testStatus === "failed") {
+  console.log("❌ Test failed");
+} else {
+  console.log("⏳ Test pending");
+}
+
+// Ternary operator (one-liner)
+const message = testStatus === "passed" ? "✅ Passed" : "❌ Failed";
+console.log(message);
+
+
+5️⃣ switch — Multiple Conditions
+
+
+const browser = "Firefox";
+
+switch (browser) {
+  case "Chrome":
+    console.log("Opening Chrome");
+    break;
+  case "Firefox":
+    console.log("Opening Firefox");
+    break;
+  case "Safari":
+    console.log("Opening Safari");
+    break;
+  default:
+    console.log("Unknown browser");
+}
+
+
+# Day 7 
+
+1️⃣ Template Literals (Deep Dive)
+
+
+// You learned this in Day 1, but now go deeper
+
+// Multi-line strings (perfect for test reports)
+const testReport = `
+=================================
+TEST EXECUTION REPORT
+=================================
+Test Name:    Login Test
+Status:       PASSED
+Duration:     2500ms
+Browser:      Chrome
+Environment:  QA
+=================================
+`;
+console.log(testReport);
+
+// Tagged template literals (advanced, nice-to-know)
+function testTag(strings, ...values) {
+  return strings[0] + values[0] + strings[1];
+}
+
+const testName = "Login";
+const result = testTag`Test: ${testName} Status: PASSED`;
+console.log(result);  // Test: Login Status: PASSED
+
+
+2️⃣ Optional Chaining (?.) — Safe Property Access
+
+// Without optional chaining (dangerous)
+const user = { name: "John" };
+console.log(user.profile.email);  // ❌ Error: Cannot read property 'email'
+
+// With optional chaining (safe)
+console.log(user?.profile?.email);  // undefined (no error)
+
+// Real SDET use case
+const apiResponse = {
+  status: 200,
+  data: {
+    user: {
+      username: "admin"
+    }
+  }
+};
+
+// Safe access without checking every level
+console.log(apiResponse?.data?.user?.username);  // admin
+console.log(apiResponse?.data?.missing?.field);  // undefined (safe)
+
+
+3️⃣ Nullish Coalescing (??) — Default Values
+
+
+// || vs ?? difference
+const config = {
+  timeout: 0,  // valid but falsy
+  retries: null
+};
+
+console.log(config.timeout || 30000);   // 30000 (treats 0 as falsy)
+console.log(config.timeout ?? 30000);   // 0 (only treats null/undefined as nullish)
+
+console.log(config.retries || 3);       // 3
+console.log(config.retries ?? 3);       // 3
+
+// In SDET: Always use ?? for defaults
+const maxRetries = config.retries ?? 3;  // correct
+
+
+4️⃣ async/await — Introduction
+This is critical for Playwright. Don't memorize now, just understand the concept.
+
+// Promises (old way)
+function getUser() {
+  return fetch('/api/user').then(r => r.json());
+}
+
+// async/await (modern way)
+async function getUser() {
+  const response = await fetch('/api/user');
+  const data = await response.json();
+  return data;
+}
+
+// In Playwright, every test is async:
+test('Login Test', async ({ page }) => {
+  await page.goto('https://saucedemo.com');  // wait for navigation
+  await page.fill('#username', 'admin');      // wait for input
+  await page.click('#submit');                // wait for click
+  await expect(page).toHaveURL('/inventory'); // wait for verification
+});
