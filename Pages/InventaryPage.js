@@ -36,6 +36,10 @@ class InventoryPage {
         const value = await this.cartBadge.textContent();
         return value ? Number(value.trim()) : 0;
     }
+
+    async addToCartButton(index = 0) {
+        await this.addToCartButtons.nth(index).click();
+    }
 }
 
 module.exports = InventoryPage;
