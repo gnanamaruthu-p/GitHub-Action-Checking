@@ -5,6 +5,7 @@ class InventoryPage {
         this.products = page.locator('.inventory_item');
         this.productNames = page.locator('.inventory_item_name');
         this.addToCartButtons = page.getByRole('button', { name: /Add to cart/i });
+        this.removeButtons = page.getByRole('button', { name: /Remove/i });
         this.cartBadge = page.locator('.shopping_cart_badge');
     }
 
@@ -22,6 +23,10 @@ class InventoryPage {
 
     async addToCart(index) {
         await this.addToCartButtons.nth(index).click();
+    }
+
+    async removeFromCart(index) {
+        await this.removeButtons.nth(index).click();
     }
 
     async getCartCount() {
