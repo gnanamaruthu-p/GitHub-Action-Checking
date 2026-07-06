@@ -29,8 +29,9 @@ jobs:
 
       - name: Run Playwright Tests
         run: npx playwright test
-        name: Check Allure Version
-  run: npx allure --version
+
+      - name: Check Allure Version
+        run: npx allure --version
 
       # Generate Allure Report
       - name: Generate Allure Report
