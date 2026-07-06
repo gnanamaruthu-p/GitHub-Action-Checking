@@ -8,7 +8,7 @@ module.exports = defineConfig({
   testDir: './tests',
   timeout: 30000,
   fullyParallel: false,
-  reporter: [['list'], ['html', { open: 'always' }]],
+  reporter: [['list'], ['html', { open: 'always' }], ['allure-playwright']],
   use: {
     headless: true,
     viewport: { width: 1280, height: 720 },
