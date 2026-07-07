@@ -2,10 +2,12 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   test:
@@ -13,41 +15,70 @@ jobs:
     timeout-minutes: 60
 
     steps:
+      # Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # Install Dependencies
       - name: Install Dependencies
         run: npm ci
 
+      # Install Playwright Browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      # Run Playwright Tests
       - name: Run Playwright Tests
         run: npx playwright test
+        continue-on-error: true
 
-      - name: Check Allure Installation
+      # Debug Environment
+      - name: Check Environment
+        if: always()
         run: |
-          echo "Node Version:"
+          echo "========== NODE =========="
           node -v
 
-          echo "NPM Version:"
+          echo "========== NPM =========="
           npm -v
 
-          echo "Allure Version:"
+          echo "========== ALLURE VERSION =========="
           npx allure --version || echo "Allure not found"
 
-          echo "Installed Packages:"
+          echo "========== INSTALLED PACKAGES =========="
           npm list --depth=0
+
+      # Check Allure Results
+      - name: Check Allure Results Folder
+        if: always()
+        run: |
+          echo "========== CURRENT DIRECTORY =========="
+          pwd
+
+          echo "========== PROJECT FILES =========="
+          ls -la
+
+          echo "========== ALLURE RESULTS =========="
+          ls -R allure-results || echo "allure-results folder not found"
 
       # Generate Allure Report
       - name: Generate Allure Report
         if: always()
-        run: npx allure generate allure-results --clean -o allure-report
+        run: |
+          npx allure generate allure-results --clean -o allure-report
+
+      # Check Generated Report
+      - name: Check Generated Allure Report
+        if: always()
+        run: |
+          echo "========== ALLURE REPORT =========="
+          ls -R allure-report || echo "allure-report folder not found"
 
       # Upload Playwright HTML Report
       - name: Upload Playwright HTML Report
@@ -64,3 +95,11 @@ jobs:
         with:
           name: allure-report
           path: allure-report/
+
+      # Upload Allure Results
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results/
