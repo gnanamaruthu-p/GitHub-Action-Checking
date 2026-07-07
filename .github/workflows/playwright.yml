@@ -30,8 +30,19 @@ jobs:
       - name: Run Playwright Tests
         run: npx playwright test
 
-      - name: Check Allure Version
-        run: npx allure --version
+      - name: Check Allure Installation
+        run: |
+          echo "Node Version:"
+          node -v
+
+          echo "NPM Version:"
+          npm -v
+
+          echo "Allure Version:"
+          npx allure --version || echo "Allure not found"
+
+          echo "Installed Packages:"
+          npm list --depth=0
 
       # Generate Allure Report
       - name: Generate Allure Report
