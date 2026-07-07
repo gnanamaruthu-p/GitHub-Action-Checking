@@ -73,6 +73,12 @@ jobs:
         run: |
           npx allure generate allure-results --clean -o allure-report
 
+      # List Allure Report Files
+      - name: List Allure Report Files
+        if: always()
+        run: |
+          ls -R allure-report
+
       # Check Generated Report
       - name: Check Generated Allure Report
         if: always()
