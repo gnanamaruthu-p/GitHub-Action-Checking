@@ -15,6 +15,7 @@
     "dotenv": "^17.4.2"
   },
   "devDependencies": {
+    "@playwright/mcp": "^0.0.77",
     "allure-commandline": "^2.43.0",
     "allure-playwright": "^3.10.2"
   }
