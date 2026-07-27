@@ -4,7 +4,7 @@ require('dotenv').config();
 module.exports = defineConfig({
   retries: process.env.CI ? 2 : 0,
 
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 4 : undefined,
   testDir: './tests',
   timeout: 30000,
   fullyParallel: false,

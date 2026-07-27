@@ -1,4 +1,8 @@
-name: Playwright Tests
+name: Playwright Tests   # workflow name 
+
+env:
+  DB_HOST: ${{ secrets.DB_HOST }}
+  API_URL: ${{ secrets.API_URL_STAGING }}
 
 on:
   push:
@@ -10,9 +14,31 @@ on:
       - main
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api_changed: ${{ steps.filter.outputs.api }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Detect API Changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            api:
+              - 'api/**'
+
   test:
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+        environment: [staging, production]
 
     steps:
       # Checkout Repository
@@ -36,7 +62,6 @@ jobs:
       # Run Playwright Tests
       - name: Run Playwright Tests
         run: npx playwright test
-        continue-on-error: true
 
       # Debug Environment
       - name: Check Environment
@@ -109,3 +134,41 @@ jobs:
         with:
           name: allure-results
           path: allure-results/
+
+  smoke-tests:
+    needs: [changes, test]
+    if: ${{ needs.changes.result == 'success' && needs.test.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Smoke Tests
+        run: echo "Running smoke tests after UI tests passed"
+
+  integration-tests:
+    needs: changes
+    if: needs.changes.outputs.api_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Integration Tests
+        run: echo "Running integration tests because API files changed"
+
+  deploy:
+    needs: [test, smoke-tests, integration-tests]
+    if: ${{ always() && needs.test.result == 'success' && needs.smoke-tests.result == 'success' && (needs.integration-tests.result == 'success' || needs.integration-tests.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Application
+        run: echo "Deploying application"

@@ -4,7 +4,8 @@
   "description": "",
   "main": "Day1.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx playwright test",
+    "start": "npx playwright test"
   },
   "keywords": [],
   "author": "",
@@ -12,11 +13,25 @@
   "type": "commonjs",
   "dependencies": {
     "@playwright/test": "^1.61.1",
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "mssql": "^12.7.0",
+    "mysql2": "^3.23.1",
+    "pg": "^8.22.0"
   },
   "devDependencies": {
     "@playwright/mcp": "^0.0.77",
     "allure-commandline": "^2.43.0",
     "allure-playwright": "^3.10.2"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gnanamaruthu-p/GitHub-Action-Checking.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gnanamaruthu-p/GitHub-Action-Checking/issues"
+  },
+  "homepage": "https://github.com/gnanamaruthu-p/GitHub-Action-Checking#readme"
 }
