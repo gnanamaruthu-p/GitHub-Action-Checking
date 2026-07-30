@@ -8,7 +8,14 @@ module.exports = defineConfig({
   testDir: './tests',
   timeout: 30000,
   fullyParallel: false,
-  reporter: [['list'], ['html', { open: 'always' }], ['allure-playwright']],
+  reporter: [
+    ['html'],
+    ['allure-playwright', {
+      outputFolder: 'allure-results',
+      detail: true,
+      suiteTitle: true
+    }]
+  ],
   use: {
     headless: true,
     viewport: { width: 1280, height: 720 },
