@@ -135,6 +135,37 @@ jobs:
           name: allure-results
           path: allure-results/
 
+      - name: Notify Slack on Failure
+        if: failure() && (github.ref_name == 'main' || github.ref_name == 'master')
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: |
+            ❌ Playwright Test Execution Failed
+
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Triggered By: ${{ github.actor }}
+
+            Failed Run:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify Slack on Success
+        if: success() && (github.ref_name == 'main' || github.ref_name == 'master')
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: |
+            ✅ Playwright Tests Passed
+
+            Branch: ${{ github.ref_name }}
+            Triggered By: ${{ github.actor }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
   smoke-tests:
     needs: [changes, test]
     if: ${{ needs.changes.result == 'success' && needs.test.result == 'success' }}
