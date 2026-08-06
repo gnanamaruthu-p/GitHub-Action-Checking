@@ -1,5 +1,6 @@
 const express = require('express');
 const orderRoutes = require('./routes/orders');
+const cartRoutes = require('./routes/cart');
 require('dotenv').config();
 
 const userRoutes = require('./routes/users');
@@ -10,6 +11,7 @@ app.use(express.json());
 
 app.use('/users', userRoutes);
 app.use('/orders', orderRoutes);
+app.use('/cart', cartRoutes);
 
 const PORT = process.env.PORT || 3000;
 

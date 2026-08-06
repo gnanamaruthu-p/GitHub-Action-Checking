@@ -2,6 +2,28 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
+const isPositiveInteger = value => {
+    const number = Number(value);
+    return Number.isInteger(number) && number > 0;
+};
+
+const validateQuantity = quantity => {
+    if (quantity === undefined || quantity === null || quantity === '') {
+        return 'Quantity is required and must be a positive integer between 1 and 999.';
+    }
+
+    if (!isPositiveInteger(quantity)) {
+        return 'Quantity must be a positive integer between 1 and 999.';
+    }
+
+    const number = Number(quantity);
+    if (number > 999) {
+        return 'Quantity must be between 1 and 999. Values like 1000000 are not allowed.';
+    }
+
+    return null;
+};
+
 /*
 GET ALL ORDERS
 GET /orders
@@ -69,6 +91,13 @@ router.post('/', async (req, res) => {
 
         const { user_id, product_id, quantity } = req.body;
 
+        const quantityError = validateQuantity(quantity);
+        if (quantityError) {
+            return res.status(400).json({
+                message: quantityError
+            });
+        }
+
         const [result] = await db.execute(
             `INSERT INTO orders
             (user_id, product_id, quantity)
@@ -102,6 +131,13 @@ router.put('/:id', async (req, res) => {
         const id = req.params.id;
 
         const { user_id, product_id, quantity } = req.body;
+
+        const quantityError = validateQuantity(quantity);
+        if (quantityError) {
+            return res.status(400).json({
+                message: quantityError
+            });
+        }
 
         const [result] = await db.execute(
             `UPDATE orders
@@ -141,6 +177,15 @@ router.patch('/:id', async (req, res) => {
     try {
 
         const id = req.params.id;
+
+        if (Object.prototype.hasOwnProperty.call(req.body, 'quantity')) {
+            const quantityError = validateQuantity(req.body.quantity);
+            if (quantityError) {
+                return res.status(400).json({
+                    message: quantityError
+                });
+            }
+        }
 
         const fields = [];
         const values = [];

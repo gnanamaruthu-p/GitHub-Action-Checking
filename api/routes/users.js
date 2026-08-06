@@ -46,6 +46,13 @@ router.get('/:id', async (req, res) => {
 
     } catch (error) {
 
+        // Handle duplicate entry from MySQL (unique constraint)
+        if (error && (error.code === 'ER_DUP_ENTRY' || error.errno === 1062)) {
+            return res.status(409).json({
+                message: 'Username or email already exists'
+            });
+        }
+
         res.status(500).json({
             message: error.message
         });
@@ -64,9 +71,46 @@ router.post('/', async (req, res) => {
 
         const { name, username, email } = req.body;
 
+        if (!name || !username) {
+            return res.status(400).json({
+                message: 'Name and username are required.'
+            });
+        }
+
+        const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+        let finalEmail = email;
+
+        // Treat missing or whitespace-only email as omitted (apply default)
+        if (email === undefined || email === null || String(email).trim() === '') {
+            finalEmail = `default-${Date.now()}@gmail.com`;
+        } else {
+            // validate trimmed email
+            const trimmed = String(email).trim();
+            if (!gmailRegex.test(trimmed)) {
+                // log for debugging when invalid email is received
+                console.log('POST /users - invalid email received:', JSON.stringify(req.body));
+                return res.status(400).json({
+                    message: 'Invalid email. Please provide a valid Gmail address.'
+                });
+            }
+            finalEmail = trimmed;
+        }
+
+        // Check for existing username or email to enforce uniqueness at API level
+        const [existingRows] = await db.execute(
+            'SELECT id FROM users WHERE username = ? OR email = ?',
+            [username, finalEmail]
+        );
+
+        if (existingRows.length > 0) {
+            return res.status(409).json({
+                message: 'Username or email already exists'
+            });
+        }
+
         const [result] = await db.execute(
             'INSERT INTO users(name, username, email) VALUES(?,?,?)',
-            [name, username, email]
+            [name, username, finalEmail]
         );
 
         res.status(201).json({
