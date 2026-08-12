@@ -2,6 +2,7 @@ const { defineConfig } = require('@playwright/test');
 require('dotenv').config();
 
 module.exports = defineConfig({
+  // Retry failed tests in CI to reduce flakiness, while keeping local runs fast with no retries.
   retries: process.env.CI ? 2 : 0,
 
   workers: process.env.CI ? 4 : undefined,
