@@ -1,7 +1,16 @@
 const path = require('path');
 const { test, expect } = require('@playwright/test');
 const mysql = require('mysql2/promise');
+require('dotenv').config();
 const { allure } = require('allure-playwright');
+
+const dbConfig = {
+  host: process.env.DB_HOST || '127.0.0.1',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'learning',
+  port: Number(process.env.DB_PORT) || 3306,
+};
 
 async function attachFailureScreenshot(testInfo, page) {
   if (!page) return;
@@ -44,13 +53,7 @@ test('Task 2: Transaction with commit', async ({ request }) => {
 
   await allure.step('Run transaction with commit workflow', async () => {
 
-    const connection = await mysql.createConnection({
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'QDSQL',
-      database: 'learning',
-    });
-
+    const connection = await mysql.createConnection(dbConfig);
 
     let userId, orderId;
 
@@ -141,13 +144,7 @@ test('Task 3: Test with rollback', async ({ request }) => {
   });
 
   await allure.step('Run rollback workflow', async () => {
-    const connection = await mysql.createConnection({
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'QDSQL',
-      database: 'learning',
-    });
-
+    const connection = await mysql.createConnection(dbConfig);
 
     let userId;
 
@@ -212,12 +209,7 @@ test('Task 4: Try-finally cleanup pattern', async ({ request }) => {
   });
 
   await allure.step('Run try-finally cleanup workflow', async () => {
-    const connection = await mysql.createConnection({
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'QDSQL',
-      database: 'Learning'
-    });
+    const connection = await mysql.createConnection(dbConfig);
 
     let userId;
     const orderIds = [];
@@ -315,12 +307,7 @@ test('Task 5: Transaction with rollback cleanup', async ({ request }) => {
   });
 
   await allure.step('Run transaction rollback cleanup workflow', async () => {
-    const connection = await mysql.createConnection({
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'QDSQL',
-      database: 'Learning'
-    });
+    const connection = await mysql.createConnection(dbConfig);
 
     let userId;
     const orderIds = [];
@@ -405,12 +392,7 @@ test('Task 6: Cleanup by timestamp', async ({ request }) => {
   });
 
   await allure.step('Run timestamp cleanup workflow', async () => {
-    const connection = await mysql.createConnection({
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'QDSQL',
-      database: 'Learning'
-    });
+    const connection = await mysql.createConnection(dbConfig);
 
     try {
       const timestamp = new Date().getTime();
@@ -477,12 +459,7 @@ test('Task 7: Cleanup by marker', async ({ request }) => {
   });
 
   await allure.step('Run marker cleanup workflow', async () => {
-    const connection = await mysql.createConnection({
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'QDSQL',
-      database: 'Learning'
-    });
+    const connection = await mysql.createConnection(dbConfig);
 
     let userId;
     const orderIds = [];

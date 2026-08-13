@@ -1,15 +1,19 @@
 const { test, expect } = require('@playwright/test');
 const mysql = require('mysql2/promise');
+require('dotenv').config();
+
+const dbConfig = {
+  host: process.env.DB_HOST || '127.0.0.1',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'learning',
+  port: Number(process.env.DB_PORT) || 3306,
+};
 
 // ===== Task 2: Transaction with Commit =====
 test('Task 2: Transaction with commit', async ({ request }) => {
 
-   const connection = await mysql.createConnection({
-          host: '127.0.0.1',
-          user: 'root',
-          password: 'QDSQL',
-          database: 'learning',
-      });
+   const connection = await mysql.createConnection(dbConfig);
   
 
   let userId, orderId;
@@ -86,12 +90,7 @@ test('Task 2: Transaction with commit', async ({ request }) => {
 
 // ===== Task 3: Rollback Test =====
 test('Task 3: Test with rollback', async ({ request }) => {
-   const connection = await mysql.createConnection({
-          host: '127.0.0.1',
-          user: 'root',
-          password: 'QDSQL',
-          database: 'learning',
-      });
+   const connection = await mysql.createConnection(dbConfig);
   
 
   let userId;
@@ -147,12 +146,7 @@ test('Task 3: Test with rollback', async ({ request }) => {
 
 // ===== Task 4: Try-Finally Cleanup =====
 test('Task 4: Try-finally cleanup pattern', async ({ request }) => {
-  const connection = await mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'QDSQL',
-    database: 'Learning'
-  });
+  const connection = await mysql.createConnection(dbConfig);
 
   let userId;
   const orderIds = [];
@@ -238,12 +232,7 @@ test('Task 4: Try-finally cleanup pattern', async ({ request }) => {
 
 // ===== Task 5: Transaction + Cleanup =====
 test('Task 5: Transaction with rollback cleanup', async ({ request }) => {
-  const connection = await mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'QDSQL',
-    database: 'Learning'
-  });
+  const connection = await mysql.createConnection(dbConfig);
 
   let userId;
   const orderIds = [];
@@ -324,12 +313,7 @@ test('Task 5: Transaction with rollback cleanup', async ({ request }) => {
 
 // ===== Task 6: Cleanup by timestamp =====
 test('Task 6: Cleanup by timestamp', async ({ request }) => {
-  const connection = await mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'QDSQL',
-    database: 'Learning'
-  });
+  const connection = await mysql.createConnection(dbConfig);
 
   try {
     const timestamp = new Date().getTime();
@@ -382,12 +366,7 @@ test('Task 6: Cleanup by timestamp', async ({ request }) => {
 
 // ===== Task 7: Cleanup by marker =====
 test('Task 7: Cleanup by marker', async ({ request }) => {
-  const connection = await mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'QDSQL',
-    database: 'Learning'
-  });
+  const connection = await mysql.createConnection(dbConfig);
 
   let userId;
   const orderIds = [];

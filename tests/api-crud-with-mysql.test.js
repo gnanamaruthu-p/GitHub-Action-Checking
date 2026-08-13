@@ -1,16 +1,20 @@
 const {test,expect} = require('@playwright/test');
 
 const mysql = require('mysql2/promise');
+require('dotenv').config();
+
+const dbConfig = {
+    host: process.env.DB_HOST || '127.0.0.1',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'learning',
+    port: Number(process.env.DB_PORT) || 3306,
+};
 
 
 test('Create and verify user ', async ({ request }) => {
 
-    const connection = await mysql.createConnection({
-        host: '127.0.0.1',
-        user: 'root',
-        password: 'QDSQL',
-        database: 'learning',
-    })
+    const connection = await mysql.createConnection(dbConfig)
 
 
     const userdata = await request.post('http://localhost:3000/users', {
@@ -42,12 +46,7 @@ test('Create and verify user ', async ({ request }) => {
 
 test('Update and verify user', async ({ request }) => {
 
-    const connection = await mysql.createConnection({
-        host: '127.0.0.1',
-        user: 'root',
-        password: 'QDSQL',
-        database: 'learning',
-    })
+    const connection = await mysql.createConnection(dbConfig)
 
     const userdata = await request.put('http://localhost:3000/users/1', {
         data:{
@@ -77,12 +76,7 @@ test('Update and verify user', async ({ request }) => {
 test('Delete and verify user', async ({ request }) => {
 
     
-    const connection = await mysql.createConnection({
-        host: '127.0.0.1',
-        user: 'root',
-        password: 'QDSQL',
-        database: 'learning',
-    })
+    const connection = await mysql.createConnection(dbConfig)
 
     const createResponse = await request.post('http://localhost:3000/users', {
         data: {
@@ -117,12 +111,7 @@ await connection.end();
 
 test('Count verification' , async ({ request }) => {
 
-    const connection = await mysql.createConnection({
-        host: '127.0.0.1',
-        user: 'root',
-        password: 'QDSQL',
-        database: 'learning',
-    });
+    const connection = await mysql.createConnection(dbConfig);
 
     const suffix = Date.now();
     const users = [
@@ -169,12 +158,7 @@ test('Count verification' , async ({ request }) => {
 
 test('Relationship verification' , async({request}) => {
 
-  const connection=await mysql.createConnection({
-        host: '127.0.0.1',
-        user: 'root',
-        password: 'QDSQL',
-        database: 'learning',
-    });
+  const connection=await mysql.createConnection(dbConfig);
 
     const userResponse = await request.post('http://localhost:3000/users', {
         data: {
