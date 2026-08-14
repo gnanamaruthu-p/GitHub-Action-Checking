@@ -1,39 +1,39 @@
-const {test ,expect, request} = require('@playwright/test');
+const { test, expect, request } = require('@playwright/test');
 
 
 
 
 
-test ( 'Task 2: Write homepage load time test:' , async ({page}) => {
+test('Task 2: Write homepage load time test:', async ({ page }) => {
 
     await page.goto('https://www.saucedemo.com/');
 
-    const matrics = await page.evaluate(() =>{
+    const matrics = await page.evaluate(() => {
 
         const nav = performance.getEntriesByType('navigation')[0];
 
-        return  {
+        return {
             domContentLoaded: nav.domContentLoadedEventEnd - nav.startTime,
-      loadComplete: nav.loadEventEnd - nav.startTime,
-      firstByte: nav.responseStart - nav.startTime
+            loadComplete: nav.loadEventEnd - nav.startTime,
+            firstByte: nav.responseStart - nav.startTime
 
 
-        } ;
+        };
 
 
     });
 
 
-    console.log('DOM Content Loaded' ,matrics);
+    console.log('DOM Content Loaded', matrics);
 });
 
 
-test('Get API Test' , async ({request})=> {
+test('Get API Test', async ({ request }) => {
 
-const startTime = Date.now();
+    const startTime = Date.now();
     const response = await request.get('http://localhost:3000/users');
 
-    const endTime = Date.now() - startTime ;
+    const endTime = Date.now() - startTime;
 
     console.log(startTime);
 
@@ -45,28 +45,28 @@ const startTime = Date.now();
 
 
 
-}) ;
+});
 
 
 
 
-test ('Post Order Api Test' , async ({request})=> {
+test('Post Order Api Test', async ({ request }) => {
 
-const startTime = Date.now();
+    const startTime = Date.now();
 
-const reseponse = await request.post('http://localhost:3000/orders', { data : { user_id : 1 , product_id : 1 , quantity : 2 } });
+    const reseponse = await request.post('http://localhost:3000/orders', { data: { user_id: 1, product_id: 1, quantity: 2 } });
 
-const endTime = Date.now()-startTime ;
+    const endTime = Date.now() - startTime;
 
-expect (reseponse.status()).toBe(201);
+    expect(reseponse.status()).toBe(201);
 
-expect(endTime).toBeLessThan(5000);
+    expect(endTime).toBeLessThan(5000);
 
 
 });
 
 
-test ('Get by id APi Testing ' , async ({request})=>{
+test('Get by id APi Testing ', async ({ request }) => {
 
 
     const startTime = Date.now();
@@ -75,7 +75,7 @@ test ('Get by id APi Testing ' , async ({request})=>{
 
     const endTime = Date.now() - startTime;
 
-    expect (response.status()).toBe(200);
+    expect(response.status()).toBe(200);
 
     expect(endTime).toBeLessThan(5000);
 });
