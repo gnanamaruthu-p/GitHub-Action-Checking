@@ -53,3 +53,4 @@ const Lage=28;
 console.log(`Name: ${Lname} city: ${Lcity} country: ${country} age: ${Lage}`);
 
 console.log("------------------------------");
+

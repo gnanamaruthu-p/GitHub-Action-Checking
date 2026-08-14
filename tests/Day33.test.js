@@ -214,3 +214,35 @@ test('Complete checkout flow timing test', async ({ page }) => {
     await expect(page.locator('.complete-header'))
         .toHaveText('Thank you for your order!');
 });
+
+
+test('Password should not be exposed in API response', async ({ request }) => {
+
+    const payload = {
+        name: 'John Doe',
+        username: `user${Date.now()}`,
+        email: `user${Date.now()}@gmail.com`,
+        password: 'Secret123@'
+    };
+
+    const response = await request.post(
+        'http://localhost:3000/users',
+        {
+            data: payload
+        }
+    );
+
+    expect(response.status()).toBe(201);
+
+    const body = await response.json();
+
+    console.log(body);
+
+    // Verify password is not returned
+    expect(body.password).toBeUndefined();
+
+    // Verify common password fields are not exposed
+    expect(body.hashedPassword).toBeUndefined();
+    expect(body.passwordHash).toBeUndefined();
+
+});

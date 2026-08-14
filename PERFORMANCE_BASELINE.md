@@ -48,3 +48,5 @@
 - Login (364 ms) was measured as part of the full checkout flow.
 - All tests were executed locally with a single user.
 - These values serve as the baseline for future performance comparison.
+
+
