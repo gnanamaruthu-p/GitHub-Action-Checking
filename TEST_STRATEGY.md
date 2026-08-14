@@ -270,4 +270,3 @@ This strategy should evolve as the application grows. New user journeys should b
 The testing approach for this repository is centered on Playwright-based UI automation, release-focused regression coverage, and clear evidence generation through HTML and Allure reporting. This ensures that critical application behavior is validated consistently and efficiently.
 
 
-test
